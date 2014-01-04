@@ -1,23 +1,21 @@
+#include <stdint.h>
+
 #ifndef WEMSType_H
 #define WEMSType_H
-
-
 
 /**Typedef aliasis of primitive and user types*/
         typedef float sflt;
         typedef float dflt;
 
-        typedef char si8;
-        typedef short si16;
-        typedef long si32;
-        //typedef long long                        si64;
+        typedef int8_t  si8;
+        typedef int16_t si16;
+        typedef int32_t si32;
+        typedef int64_t si64;
 
-        typedef unsigned char ui8;
-        typedef unsigned short ui16;
-        typedef unsigned long ui32;
-        //typedef unsigned long long        ui64;
-
-/** Action delegate signature*/        
+        typedef uint8_t  ui8;
+        typedef uint16_t ui16;
+        typedef uint32_t ui32;
+        typedef uint64_t ui64;    
 
 #endif
 
