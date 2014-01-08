@@ -7,7 +7,7 @@
         typedef float sflt;
         typedef float dflt;
 
-        typedef int8_t  si8;
+        typedef char  si8;
         typedef int16_t si16;
         typedef int32_t si32;
         typedef int64_t si64;

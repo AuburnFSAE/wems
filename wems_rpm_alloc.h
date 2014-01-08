@@ -20,5 +20,6 @@ wems_rpm_block wems_rpm_minmax_create(	si16* rpm_pins,
 										si16 min,
 										si16 max);
 
+void wems_rpm_set_ligths479(const wems_rpm_block* rpm_blk, si16 rpm_val, ui8 direction);
 #endif
 
