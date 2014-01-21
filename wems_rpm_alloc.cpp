@@ -1,68 +1,73 @@
 #include "wems_rpm_alloc.h"
-#include <malloc.h>
-#include <Arduino.h>
-#ifdef WEMS_RPM_ALLOC_H
 
-wems_rpm_block wems_rpm_create(si16* rpm_pins, si16 pin_count){
-	wems_rpm_block block;
-	block.pins = rpm_pins;
+void wems_rpm_alloc( wems_rpm_block* blk, si16* rpm_pins, si16 n_count){
+	blk->pins = rpm_pins;
 
-	block.pin_count=pin_count;
-	block.min_rpm=6000;
-	block.max_rpm=13000;
+	blk->count=n_count;
+	blk->min_rpm=6000;
+	blk->max_rpm=13000;
 
-	block.rpm_range = block.max_rpm - block.min_rpm;
+	blk->rpm_range = blk->max_rpm - blk->min_rpm;
+	blk->active_level = HIGH;
+	for( si16 i = 0; i < blk->count; pinMode(rpm_pins[i++], OUTPUT));	
 
-	for( si16 i = 0; i < block.pin_count; pinMode(rpm_pins[i++], OUTPUT));
-return block;}
+	for( si16 i = 0; i < blk->count; digitalWrite(rpm_pins[i++], LOW));
+return;}
 
 
-wems_rpm_block wems_rpm_minmax_create(si16* rpm_pins, si16 pin_count, si16 min_rpm, si16 max_rpm){
-	wems_rpm_block block;
-	block.pins = rpm_pins;
+void wems_rpm_minmax_alloc(wems_rpm_block* blk, si16* rpm_pins, si16 count, si16 min_rpm, si16 max_rpm){
+	wems_rpm_alloc(blk, rpm_pins, count);
 
-	block.pin_count=pin_count;
-	block.min_rpm=min_rpm;
-	block.max_rpm=max_rpm;
+	blk->min_rpm=min_rpm;
+	blk->max_rpm=max_rpm;
+	blk->rpm_range = blk->max_rpm - blk->min_rpm;
+return;}
 
-	block.rpm_range = block.max_rpm - block.min_rpm;
-	for( si16 i = 0; i < block.pin_count; pinMode(rpm_pins[i++], OUTPUT));	
-return block;}
 
-void wems_rpm_set_ligths479(const wems_rpm_block* rpm_blk, si16 rpm_val, ui8 direction){
+void wems_rpm_set_shiftpoint(wems_rpm_block* blk, si16 shift_rpm, ui8 shift_pin){
+	blk->shift_pin = shift_pin;
+	blk->shift_rpm = shift_rpm;
 
-// 	 struct wems_rpm_block{
-// 	si16* pins;
-// 	si16 pin_count;
-// 	si16 min_rpm;
-// 	si16 max_rpm;
-// 	si16 rpm_range;
-// };	
+	digitalWrite( blk->shift_pin, LEVELFLIP(blk->shift_level) );
+return;}
+
+
+void wems_rpm_set_ligths479(const wems_rpm_block* rpm_blk, si16 rpm_val, ui8 direction){	
 	si16* leds = rpm_blk->pins;
 
-	si16 _x_ = ((si32)rpm_blk->pin_count * (rpm_val - rpm_blk->min_rpm))/rpm_blk->rpm_range;
-	sflt eq_p = (rpm_blk->pin_count/8.999);
+	si16 _x_ = ((si32)rpm_blk->count * (rpm_val - rpm_blk->min_rpm))/rpm_blk->rpm_range;
+	sflt eq_p = (rpm_blk->count/8.999);
 
 	if( direction ){
 		  si16 n=0;
 		 if( _x_ > (n=4*eq_p) ){
-		    for( si16 i=0; i<n; digitalWrite(leds[i++], HIGH) ); 
+		    for( si16 i=0; i<n; digitalWrite(leds[i++], rpm_blk->active_level) ); 
 		}if( _x_ > (n=7*eq_p, n) ){
-		    for( si16 i=4*eq_p; i < n; digitalWrite(leds[i++], HIGH) );
+		    for( si16 i=4*eq_p; i < n; digitalWrite(leds[i++], rpm_blk->active_level) );
 
 		}if( _x_ == (n=9*eq_p)){
-		    for( si16 i=7*eq_p; i < n; digitalWrite(leds[i++], HIGH) );
+		    for( si16 i=7*eq_p; i < n; digitalWrite(leds[i++], rpm_blk->active_level) );
 		}
 	}else{
 
 	  if( _x_ < 8*eq_p )
-	    for( si16 i=rpm_blk->pin_count-1; i > 6*eq_p; digitalWrite(leds[i--], LOW) );
+	    for( si16 i=rpm_blk->count-1; i > 6*eq_p; digitalWrite(leds[i--], !(rpm_blk->active_level)) );
 
 	  if( _x_ < 5*eq_p)
-	    for( si16 i=6*eq_p; i > 3*eq_p; digitalWrite(leds[i--], LOW) );
+	    for( si16 i=6*eq_p; i > 3*eq_p; digitalWrite(leds[i--], !(rpm_blk->active_level)) );
 
 	  if( _x_ < 1*eq_p )
-	    for( si16 i=3*eq_p; i>-1; digitalWrite(leds[i--], LOW) );
+	    for( si16 i=3*eq_p; i>-1; digitalWrite(leds[i--], !(rpm_blk->active_level)) );
 	}
+
+	wems_rpm_toggle_shift2(rpm_blk, rpm_val, 4);
 return;}
-#endif
+
+
+void wems_rpm_toggle_shift2(const wems_rpm_block* blk, si16 rpm_val, si16 ms_delay ){
+
+	
+	ui8 tggl = blk->shift_level;
+	if( rpm_val >= blk->shift_rpm )
+	for( int i =0; i < 4; i++){ digitalWrite(blk->shift_pin, (delay(ms_delay),tggl=!tggl, tggl) );}
+}

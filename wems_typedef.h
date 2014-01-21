@@ -3,7 +3,7 @@
 #ifndef WEMSType_H
 #define WEMSType_H
 
-/**Typedef aliasis of primitive and user types*/
+/**Typedef aliasis of primitive types*/
         typedef float sflt;
         typedef float dflt;
 
