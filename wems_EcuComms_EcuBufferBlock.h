@@ -33,11 +33,11 @@ struct WemsEcuBufferBlock{
 	DataStreamSI16 ecu_stream;
 };
 
-const ui32 HEADERMASK = 0x3FFFFFFF;
+const ui32 HEADERMASK = 0x3FFFFFFFu;
 
 ui32 wems_EcuComms_GetHeader(void);
 
-WemsEcuBufferBlock wems_EcuComms_GetEcuBlock(si16 n_num_channels, si16 n_comm_pin);
+WemsEcuBufferBlock* wems_EcuComms_GetEcuBlock(si16 n_num_channels, si16 n_comm_pin);
 
 
 #endif
