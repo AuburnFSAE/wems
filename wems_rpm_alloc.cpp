@@ -32,7 +32,7 @@ void wems_rpm_set_shiftpoint(wems_rpm_block* blk, si16 shift_rpm, ui8 shift_pin)
 return;}
 
 
-void wems_rpm_set_ligths479(const wems_rpm_block* rpm_blk, si16 rpm_val, ui8 direction){	
+void wems_rpm_set_lights479(const wems_rpm_block* rpm_blk, si16 rpm_val, ui8 direction){	
 	si16* leds = rpm_blk->pins;
 
 	si16 _x_ = ((si32)rpm_blk->count * (rpm_val - rpm_blk->min_rpm))/rpm_blk->rpm_range;
@@ -64,9 +64,24 @@ void wems_rpm_set_ligths479(const wems_rpm_block* rpm_blk, si16 rpm_val, ui8 dir
 return;}
 
 
-void wems_rpm_toggle_shift2(const wems_rpm_block* blk, si16 rpm_val, si16 ms_delay ){
+void wems_rpm_set_lightsmap(const wems_rpm_block* blk, const si16 rx){
+	for(si16 ilow=0; ilow<blk->map_size; ilow++){
+		digitalWrite(blk->pins[ilow], LOW); 
+	}
 
-	
+	for(si16 ihgh=0; ihgh<blk->map_size; ihgh++){
+		if(rx>blk->map[ihgh])digitalWrite(blk->pins[ihgh], HIGH);
+	}
+
+return;}
+
+void wems_rpm_reset(const wems_rpm_block* blk){
+	for(si16 ilow=0; ilow<blk->map_size; ilow++){
+		digitalWrite(blk->pins[ilow], LOW); 
+	}
+return;}
+
+void wems_rpm_toggle_shift2(const wems_rpm_block* blk, si16 rpm_val, si16 ms_delay ){
 	ui8 tggl = blk->shift_level;
 	if( rpm_val >= blk->shift_rpm )
 	for( int i =0; i < 4; i++){ digitalWrite(blk->shift_pin, (delay(ms_delay),tggl=!tggl, tggl) );}

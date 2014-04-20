@@ -3,7 +3,7 @@
 DataStreamSI16 wems_DataStream_GetSI16(si16 n_word_count){
 
 	DataStreamSI16 dstream;
-	dstream.pU8 = (ui8*)malloc(sizeof(si16) *(n_word_count+1));
+	dstream.pU8 = (ui8*)calloc(n_word_count+1, sizeof(si16));
 	dstream.word_count=n_word_count;
 	dstream.sync_word = 0xFFFF;
 	dstream.word_size = 2;

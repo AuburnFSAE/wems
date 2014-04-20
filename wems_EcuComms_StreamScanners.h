@@ -17,6 +17,4 @@ void wems_EcuComms_DataScan(WemsEcuBufferBlock*);
 void wems_EcuComms_VoidScan(WemsEcuBufferBlock*);
 
 void wems_EcuComms_ResetHeaderWait(WemsEcuBufferBlock*); 
-
-
 #endif

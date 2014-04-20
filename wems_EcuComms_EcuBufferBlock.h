@@ -4,7 +4,7 @@
 #define ECU_COMMS_BLOCK
 #include "wems_typedef.h"
 #include "wems_DataStream.h"
-/*
+
 
 /**
 \file
@@ -30,6 +30,8 @@ struct WemsEcuBufferBlock{
 	si16 num_channels;
 	si16 ecu_channel_count;
 	si16 comm_pin;
+	void* object_data;
+	si16 reset_cnt;
 	DataStreamSI16 ecu_stream;
 };
 
